@@ -21,6 +21,7 @@ const command = defineCommand({
     format: { type: "string", alias: "f", description: "pretty | text | json | markdown", default: "pretty" },
     type: { type: "string", description: "user | org | auto", default: "auto" },
     font: { type: "string", description: "figlet font for pretty header", default: "Standard" },
+    export: { type: "string", description: "Write PNG card to file path" },
     "no-cache": { type: "boolean", description: "Skip cache, force fresh fetch", default: false },
     "cache-ttl": { type: "string", description: "Cache TTL in minutes", default: "60" },
     token: { type: "string", alias: "t", description: "GitHub token (or env GITHUB_TOKEN)" },
@@ -64,6 +65,7 @@ export async function runCli(
   }
   const type = typeRaw as "user" | "org" | "auto";
   const font = String(parsed.font);
+  const exportPath = parsed.export ? String(parsed.export) : undefined;
   const useCache = !parsed["no-cache"];
   const ttl = Math.max(0, parseInt(String(parsed["cache-ttl"]), 10) || 60);
   const token = (parsed.token as string | undefined) ?? process.env.GITHUB_TOKEN;
@@ -78,6 +80,18 @@ export async function runCli(
       onProgress: (s) => spinner.update(s),
     });
     spinner.stop();
+
+    if (exportPath) {
+      const { formatCard } = await import("./formatters/card.js");
+      const { Resvg } = await import("@resvg/resvg-js");
+      const { writeFileSync } = await import("node:fs");
+      const svg = await formatCard(profile, top);
+      const png = new Resvg(svg, { fitTo: { mode: "width", value: 1200 } }).render().asPng();
+      writeFileSync(exportPath, png);
+      stderr(`wrote ${exportPath}\n`);
+      return 0;
+    }
+
     stdout((await format(profile, fmt, top, font)) + "\n");
     return 0;
   } catch (err) {
