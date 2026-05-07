@@ -1,6 +1,8 @@
 import { defineCommand, renderUsage, runCommand } from "citty";
+import { realpathSync } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { FsCache } from "./cache.js";
 import { format, type Format } from "./formatters/index.js";
 import { buildProfile } from "./profile.js";
@@ -77,7 +79,16 @@ export async function runCli(
   }
 }
 
-const isMain = process.argv[1] && import.meta.url === `file://${process.argv[1]}`;
-if (isMain) {
+function isMainModule(): boolean {
+  const entry = process.argv[1];
+  if (!entry) return false;
+  try {
+    return fileURLToPath(import.meta.url) === realpathSync(entry);
+  } catch {
+    return false;
+  }
+}
+
+if (isMainModule()) {
   runCli(process.argv.slice(2)).then((code) => process.exit(code));
 }
