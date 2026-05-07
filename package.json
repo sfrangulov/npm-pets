@@ -1,8 +1,16 @@
 {
   "name": "npm-pets",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "CLI for npm user and organization stats",
   "type": "module",
+  "main": "./dist/lib.js",
+  "types": "./dist/lib.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/lib.js",
+      "types": "./dist/lib.d.ts"
+    }
+  },
   "bin": {
     "npm-pets": "./dist/cli.js"
   },

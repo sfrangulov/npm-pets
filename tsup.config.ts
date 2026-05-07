@@ -3,10 +3,11 @@ import { copyFileSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
 
 export default defineConfig({
-  entry: { cli: "src/cli.ts" },
+  entry: { cli: "src/cli.ts", lib: "src/lib.ts" },
   format: ["esm"],
   target: "node20",
   clean: true,
+  dts: true,
   minify: false,
   banner: { js: "#!/usr/bin/env node" },
   shims: false,
