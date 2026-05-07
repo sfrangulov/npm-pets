@@ -1,0 +1,49 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`formatMarkdown > matches snapshot for full profile 1`] = `
+"# sindresorhus on npm
+
+**Type:** user · **Packages:** 2
+**GitHub followers:** 60,000 · **Total stars:** 27,000
+
+## Downloads
+
+| Period | Downloads |
+| --- | ---: |
+| Last week | 50,000,000 |
+| Last month | 200,000,000 |
+| All time | 9,000,000,000 |
+
+## Top 5 packages
+
+| Package | Monthly DL | Stars | Issues |
+| --- | ---: | ---: | ---: |
+| [chalk](https://www.npmjs.com/package/chalk) | 180,000,000 | 22,000 | 4 |
+| [ora](https://www.npmjs.com/package/ora) | 20,000,000 | 5,000 | 12 |
+
+*Generated 2026-05-07T12:00:00.000Z by [npm-pets](https://www.npmjs.com/package/npm-pets).*"
+`;
+
+exports[`formatMarkdown > matches snapshot when GitHub data is unavailable 1`] = `
+"# sindresorhus on npm
+
+**Type:** user · **Packages:** 2
+> ⚠️ GitHub data unavailable: GitHub rate limit hit; set GITHUB_TOKEN for full data
+
+## Downloads
+
+| Period | Downloads |
+| --- | ---: |
+| Last week | 50,000,000 |
+| Last month | 200,000,000 |
+| All time | 9,000,000,000 |
+
+## Top 5 packages
+
+| Package | Monthly DL | Stars | Issues |
+| --- | ---: | ---: | ---: |
+| [chalk](https://www.npmjs.com/package/chalk) | 180,000,000 | — | — |
+| [ora](https://www.npmjs.com/package/ora) | 20,000,000 | — | — |
+
+*Generated 2026-05-07T12:00:00.000Z by [npm-pets](https://www.npmjs.com/package/npm-pets).*"
+`;
