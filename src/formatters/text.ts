@@ -19,6 +19,21 @@ export function formatText(profile: Profile, top: number): string {
   lines.push(`  last month:  ${fmt.format(profile.totals.downloadsLastMonth)}`);
   lines.push(`  all time:    ${fmt.format(profile.totals.downloadsAllTime)}`);
   lines.push("");
+  lines.push("Insights");
+  const v = profile.insights.velocity;
+  const sign = v.deltaPct >= 0 ? "+" : "";
+  lines.push(`  trend:    ${sign}${v.deltaPct.toFixed(1)}% MoM (${fmt.format(v.last30d)} vs ${fmt.format(v.prev30d)})`);
+  const h = profile.insights.health;
+  lines.push(`  health:   ${h.active} active · ${h.sleeping} sleeping · ${h.dormant} dormant`);
+  const s = profile.insights.streak;
+  if (s.longestMonths > 0) {
+    const cur = s.currentMonths > 0 ? `, current ${s.currentMonths}` : "";
+    lines.push(`  streak:   longest ${s.longestMonths} mo (${s.longestPackage})${cur}`);
+  } else {
+    lines.push(`  streak:   —`);
+  }
+
+  lines.push("");
   lines.push(`Top ${top} packages by monthly downloads`);
 
   for (const pkg of profile.packages.slice(0, top)) {
