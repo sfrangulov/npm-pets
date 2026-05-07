@@ -6,6 +6,7 @@ import { fileURLToPath } from "node:url";
 import { FsCache } from "./cache.js";
 import { format, type Format } from "./formatters/index.js";
 import { buildProfile } from "./profile.js";
+import { Spinner } from "./spinner.js";
 
 type Writer = (s: string) => void;
 
@@ -48,7 +49,7 @@ export async function runCli(
     return 2;
   }
 
-  const target = String(parsed.target);
+  const target = String(parsed.target).replace(/^@/, "");
   const fmtRaw = String(parsed.format);
   if (!["pretty", "text", "json", "markdown"].includes(fmtRaw)) {
     stderr(`invalid --format "${fmtRaw}"\n`);
@@ -69,11 +70,18 @@ export async function runCli(
 
   const cache = useCache ? new FsCache(join(homedir(), ".cache", "npm-pets"), ttl) : undefined;
 
+  const spinner = new Spinner(process.stderr);
+  spinner.start("starting");
   try {
-    const profile = await buildProfile({ target, type, token, cache, concurrency: 8 });
+    const profile = await buildProfile({
+      target, type, token, cache, concurrency: 4,
+      onProgress: (s) => spinner.update(s),
+    });
+    spinner.stop();
     stdout(format(profile, fmt, top, font) + "\n");
     return 0;
   } catch (err) {
+    spinner.stop();
     stderr(`${(err as Error).message}\n`);
     return 1;
   }

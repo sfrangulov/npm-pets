@@ -11,14 +11,18 @@ export interface BuildProfileOptions {
   token: string | undefined;
   cache: FsCache | undefined;
   concurrency: number;
+  onProgress?: (stage: string) => void;
 }
 
 export async function buildProfile(opts: BuildProfileOptions): Promise<Profile> {
-  const targetType = await resolveType(opts);
-  const packageNames = await npm.listMaintainerPackages(opts.target, opts.cache);
+  const report = (s: string) => opts.onProgress?.(s);
+
+  report(`resolving "${opts.target}"`);
+  const { type: targetType, packageNames } = await listAndDetect(opts);
   if (packageNames.length === 0) {
     throw new Error(`no npm packages found for "${opts.target}"`);
   }
+  report(`found ${packageNames.length} ${targetType} packages`);
 
   let githubAvailable = true;
   let githubSkipReason: string | undefined;
@@ -32,6 +36,10 @@ export async function buildProfile(opts: BuildProfileOptions): Promise<Profile> 
   const limit = pLimit(opts.concurrency);
   type IntermediatePackage = Omit<Package, "repository"> & { _ref: npm.RepoRef | null };
 
+  let pkgDone = 0;
+  const total = packageNames.length;
+  report(`fetching package data (0/${total})`);
+
   const packages: IntermediatePackage[] = await Promise.all(
     packageNames.map((name) =>
       limit(async () => {
@@ -41,6 +49,8 @@ export async function buildProfile(opts: BuildProfileOptions): Promise<Profile> 
           npm.getDownloadsPoint(name, "last-month", opts.cache),
           npm.getDownloadsRange(name, info.firstPublishedAt, opts.cache).catch(() => 0),
         ]);
+        pkgDone++;
+        report(`fetching package data (${pkgDone}/${total})`);
         return {
           name: info.name,
           version: info.version,
@@ -64,6 +74,9 @@ export async function buildProfile(opts: BuildProfileOptions): Promise<Profile> 
 
   const repoData = new Map<string, GitHubRepo>();
   if (githubAvailable) {
+    let ghDone = 0;
+    const ghTotal = refMap.size;
+    report(`fetching GitHub data (0/${ghTotal})`);
     await Promise.all(
       Array.from(refMap.values()).map((ref) =>
         limit(async () => {
@@ -82,6 +95,8 @@ export async function buildProfile(opts: BuildProfileOptions): Promise<Profile> 
           } catch (e) {
             if (e instanceof RateLimitError) onRateLimit("repo info");
           }
+          ghDone++;
+          report(`fetching GitHub data (${ghDone}/${ghTotal})`);
         }),
       ),
     );
@@ -125,8 +140,21 @@ export async function buildProfile(opts: BuildProfileOptions): Promise<Profile> 
   };
 }
 
-async function resolveType(opts: BuildProfileOptions): Promise<"user" | "org"> {
-  if (opts.type !== "auto") return opts.type;
-  const isOrg = await npm.isOrg(opts.target, opts.cache);
-  return isOrg ? "org" : "user";
+async function listAndDetect(
+  opts: BuildProfileOptions,
+): Promise<{ type: "user" | "org"; packageNames: string[] }> {
+  if (opts.type === "user") {
+    return { type: "user", packageNames: await npm.listMaintainerPackages(opts.target, opts.cache) };
+  }
+  if (opts.type === "org") {
+    return { type: "org", packageNames: await npm.listOrgPackages(opts.target, opts.cache) };
+  }
+  // auto: prefer user (maintainer search) — if no results, fall back to org packages
+  const [userPkgs, orgPkgs] = await Promise.all([
+    npm.listMaintainerPackages(opts.target, opts.cache),
+    npm.listOrgPackages(opts.target, opts.cache),
+  ]);
+  if (userPkgs.length > 0) return { type: "user", packageNames: userPkgs };
+  if (orgPkgs.length > 0) return { type: "org", packageNames: orgPkgs };
+  return { type: "user", packageNames: [] };
 }

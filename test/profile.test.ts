@@ -7,7 +7,7 @@ beforeEach(() => { vi.restoreAllMocks(); });
 
 describe("buildProfile", () => {
   it("assembles a profile with npm + github data", async () => {
-    vi.spyOn(npm, "isOrg").mockResolvedValue(false);
+    vi.spyOn(npm, "listOrgPackages").mockResolvedValue([]);
     vi.spyOn(npm, "listMaintainerPackages").mockResolvedValue(["chalk"]);
     vi.spyOn(npm, "getPackage").mockResolvedValue({
       name: "chalk",
@@ -55,7 +55,7 @@ describe("buildProfile", () => {
   });
 
   it("degrades gracefully on GitHub rate limit", async () => {
-    vi.spyOn(npm, "isOrg").mockResolvedValue(false);
+    vi.spyOn(npm, "listOrgPackages").mockResolvedValue([]);
     vi.spyOn(npm, "listMaintainerPackages").mockResolvedValue(["chalk"]);
     vi.spyOn(npm, "getPackage").mockResolvedValue({
       name: "chalk",
@@ -87,7 +87,7 @@ describe("buildProfile", () => {
   });
 
   it("throws when target has no packages", async () => {
-    vi.spyOn(npm, "isOrg").mockResolvedValue(false);
+    vi.spyOn(npm, "listOrgPackages").mockResolvedValue([]);
     vi.spyOn(npm, "listMaintainerPackages").mockResolvedValue([]);
     await expect(
       buildProfile({ target: "ghost", type: "auto", token: undefined, cache: undefined, concurrency: 4 }),

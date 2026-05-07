@@ -16,8 +16,8 @@ export interface HttpOptions {
 }
 
 const DEFAULT_TIMEOUT = 10_000;
-const DEFAULT_RETRIES = 2;
-const DEFAULT_RETRY_BASE = 300;
+const DEFAULT_RETRIES = 4;
+const DEFAULT_RETRY_BASE = 500;
 
 export async function httpJson<T = unknown>(
   url: string,
@@ -41,13 +41,18 @@ export async function httpJson<T = unknown>(
       const res = await fetch(url, { headers: opts.headers, signal: ac.signal });
       clearTimeout(timer);
       const headers = Object.fromEntries(res.headers.entries());
-      // Retry on 5xx only
-      if (res.status >= 500 && attempt < retries) {
+      // Retry on 5xx and 429 (rate limit)
+      if ((res.status >= 500 || res.status === 429) && attempt < retries) {
         await sleep(baseMs * 2 ** attempt);
         continue;
       }
       const text = await res.text();
-      const body = (text ? JSON.parse(text) : null) as T;
+      let body: T;
+      try {
+        body = (text ? JSON.parse(text) : null) as T;
+      } catch {
+        body = null as T;
+      }
       const result: HttpResult<T> = { status: res.status, body, headers };
       if (opts.cache && res.status >= 200 && res.status < 300) {
         await opts.cache.set(cacheKey, result);
