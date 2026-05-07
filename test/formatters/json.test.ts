@@ -15,4 +15,11 @@ describe("formatJson", () => {
     expect(out.insights.health.dormant).toBe(2);
     expect(out.insights.streak.longestPackage).toBe("chalk");
   });
+
+  it("includes persona block", () => {
+    const out = JSON.parse(formatJson(sampleProfile));
+    expect(out.persona.type).toBeDefined();
+    expect(out.persona.label).toBeDefined();
+    expect(out.persona.emoji).toBeDefined();
+  });
 });

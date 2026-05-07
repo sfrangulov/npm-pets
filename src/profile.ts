@@ -5,6 +5,7 @@ import * as github from "./fetchers/github.js";
 import { RateLimitError } from "./fetchers/github.js";
 import type { Package, Profile, GitHubRepo } from "./types.js";
 import { buildInsights } from "./insights.js";
+import { detectPersona } from "./persona.js";
 
 export interface BuildProfileOptions {
   target: string;
@@ -151,7 +152,7 @@ export async function buildProfile(opts: BuildProfileOptions): Promise<Profile> 
     }),
   );
 
-  return {
+  const profile: Profile = {
     name: opts.target,
     type: targetType,
     generatedAt: new Date().toISOString(),
@@ -160,7 +161,10 @@ export async function buildProfile(opts: BuildProfileOptions): Promise<Profile> 
     packages: finalPackages,
     github: { followers, available: githubAvailable, skipReason: githubSkipReason },
     insights,
+    persona: { type: "builder", label: "", emoji: "", description: "" },
   };
+  profile.persona = detectPersona(profile);
+  return profile;
 }
 
 async function listAndDetect(

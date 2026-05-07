@@ -29,6 +29,7 @@ export const sampleProfile: Profile = {
         pushedAt: "2024-01-01T00:00:00.000Z",
         contributors: 150,
         license: "MIT",
+        language: "JavaScript",
       },
     },
     {
@@ -48,6 +49,7 @@ export const sampleProfile: Profile = {
         pushedAt: "2024-02-01T00:00:00.000Z",
         contributors: 60,
         license: "MIT",
+        language: "JavaScript",
       },
     },
   ],
@@ -73,6 +75,12 @@ export const sampleProfile: Profile = {
       currentMonths: 0,
       longestPackage: "chalk",
     },
+  },
+  persona: {
+    type: "builder",
+    label: "The Builder",
+    emoji: "🛠️",
+    description: "Quietly shipping software",
   },
 };
 

@@ -33,6 +33,7 @@ describe("buildProfile", () => {
       pushedAt: "2024-01-01T00:00:00Z",
       contributors: 0,
       license: "MIT",
+      language: null,
     });
     vi.spyOn(github, "getContributorsCount").mockResolvedValue(150);
     vi.spyOn(github, "getUser").mockResolvedValue(50000);
