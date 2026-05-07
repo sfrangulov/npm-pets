@@ -1,0 +1,16 @@
+{
+  "name": "chalk",
+  "dist-tags": { "latest": "5.3.0" },
+  "versions": {
+    "1.0.0": { "version": "1.0.0", "license": "MIT", "dist": { "unpackedSize": 1000 } },
+    "5.3.0": { "version": "5.3.0", "license": "MIT", "dist": { "unpackedSize": 5000 } }
+  },
+  "time": {
+    "created": "2013-01-01T00:00:00.000Z",
+    "modified": "2023-09-01T00:00:00.000Z",
+    "1.0.0": "2013-01-01T00:00:00.000Z",
+    "5.3.0": "2023-09-01T00:00:00.000Z"
+  },
+  "license": "MIT",
+  "repository": { "type": "git", "url": "git+https://github.com/chalk/chalk.git" }
+}

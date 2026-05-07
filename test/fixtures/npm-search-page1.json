@@ -1,0 +1,8 @@
+{
+  "objects": [
+    { "package": { "name": "chalk" } },
+    { "package": { "name": "ora" } }
+  ],
+  "total": 2,
+  "time": "now"
+}
