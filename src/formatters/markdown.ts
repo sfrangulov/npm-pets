@@ -21,6 +21,21 @@ export function formatMarkdown(profile: Profile, top: number): string {
   lines.push(`| Last month | ${fmt.format(profile.totals.downloadsLastMonth)} |`);
   lines.push(`| All time | ${fmt.format(profile.totals.downloadsAllTime)} |`);
   lines.push("");
+  lines.push("## Insights");
+  lines.push("");
+  const v = profile.insights.velocity;
+  const sign = v.deltaPct >= 0 ? "+" : "";
+  lines.push(`- **Trend:** ${sign}${v.deltaPct.toFixed(1)}% MoM (${fmt.format(v.last30d)} vs ${fmt.format(v.prev30d)})`);
+  const h = profile.insights.health;
+  lines.push(`- **Health:** ${h.active} active · ${h.sleeping} sleeping · ${h.dormant} dormant`);
+  const s = profile.insights.streak;
+  if (s.longestMonths > 0) {
+    const cur = s.currentMonths > 0 ? `, current **${s.currentMonths}**` : "";
+    lines.push(`- **Streak:** longest **${s.longestMonths} mo** in \`${s.longestPackage}\`${cur}`);
+  } else {
+    lines.push(`- **Streak:** —`);
+  }
+  lines.push("");
   lines.push(`## Top ${top} packages`);
   lines.push("");
   lines.push("| Package | Monthly DL | Stars | Issues |");

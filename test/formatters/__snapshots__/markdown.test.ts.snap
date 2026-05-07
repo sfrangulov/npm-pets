@@ -14,6 +14,12 @@ exports[`formatMarkdown > matches snapshot for full profile 1`] = `
 | Last month | 200,000,000 |
 | All time | 9,000,000,000 |
 
+## Insights
+
+- **Trend:** +11.1% MoM (200,000,000 vs 180,000,000)
+- **Health:** 0 active · 0 sleeping · 2 dormant
+- **Streak:** longest **6 mo** in \`chalk\`
+
 ## Top 5 packages
 
 | Package | Monthly DL | Stars | Issues |
@@ -37,6 +43,12 @@ exports[`formatMarkdown > matches snapshot when GitHub data is unavailable 1`] =
 | Last week | 50,000,000 |
 | Last month | 200,000,000 |
 | All time | 9,000,000,000 |
+
+## Insights
+
+- **Trend:** +11.1% MoM (200,000,000 vs 180,000,000)
+- **Health:** 0 active · 0 sleeping · 2 dormant
+- **Streak:** longest **6 mo** in \`chalk\`
 
 ## Top 5 packages
 
