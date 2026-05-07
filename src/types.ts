@@ -17,6 +17,7 @@ export interface GitHubRepo {
   pushedAt: string;
   contributors: number;
   license: string | null;
+  language: string | null;
 }
 
 export interface PackageDownloads {

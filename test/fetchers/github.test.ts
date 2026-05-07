@@ -24,6 +24,7 @@ describe("getRepo", () => {
       pushedAt: "2024-01-01T00:00:00Z",
       license: "MIT",
       contributors: 0,
+      language: null,
     });
   });
 
@@ -35,6 +36,28 @@ describe("getRepo", () => {
   it("throws RateLimitError on 403", async () => {
     vi.spyOn(globalThis, "fetch").mockResolvedValue(errStatus(403));
     await expect(getRepo({ owner: "x", repo: "y" })).rejects.toBeInstanceOf(RateLimitError);
+  });
+
+  it("getRepo returns language from GitHub response", async () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(okJson({
+      stargazers_count: 10,
+      open_issues_count: 2,
+      pushed_at: "2026-01-01T00:00:00Z",
+      license: { spdx_id: "MIT" },
+      language: "TypeScript",
+    }));
+    const repo = await getRepo({ owner: "x", repo: "y" });
+    expect(repo?.language).toBe("TypeScript");
+  });
+
+  it("getRepo returns null language when missing", async () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(okJson({
+      stargazers_count: 0,
+      open_issues_count: 0,
+      pushed_at: "2026-01-01T00:00:00Z",
+    }));
+    const repo = await getRepo({ owner: "x", repo: "y" });
+    expect(repo?.language).toBeNull();
   });
 });
 

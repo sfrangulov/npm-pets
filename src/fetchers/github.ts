@@ -31,6 +31,7 @@ export async function getRepo(ref: RepoRef, ctx: Ctx = {}): Promise<GitHubRepo |
     open_issues_count: number;
     pushed_at: string;
     license: { spdx_id?: string } | null;
+    language?: string;
   }>(url, { headers: headers(ctx.token), cache: ctx.cache });
 
   if (status === 404) return null;
@@ -45,6 +46,7 @@ export async function getRepo(ref: RepoRef, ctx: Ctx = {}): Promise<GitHubRepo |
     pushedAt: body.pushed_at,
     contributors: 0,
     license: body.license?.spdx_id ?? null,
+    language: body.language ?? null,
   };
 }
 
