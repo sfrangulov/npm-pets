@@ -1,0 +1,38 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`formatText > matches snapshot for full profile 1`] = `
+"npm-pets — sindresorhus (user)
+
+Packages: 2
+GitHub stars (sum): 27,000
+GitHub followers: 60,000
+
+Downloads
+  last week:   50,000,000
+  last month:  200,000,000
+  all time:    9,000,000,000
+
+Top 5 packages by monthly downloads
+  chalk  180,000,000/mo  ★ 22,000  4 issues
+  ora  20,000,000/mo  ★ 5,000  12 issues
+
+Generated 2026-05-07T12:00:00.000Z"
+`;
+
+exports[`formatText > matches snapshot when GitHub data is unavailable 1`] = `
+"npm-pets — sindresorhus (user)
+
+Packages: 2
+GitHub: unavailable (GitHub rate limit hit; set GITHUB_TOKEN for full data)
+
+Downloads
+  last week:   50,000,000
+  last month:  200,000,000
+  all time:    9,000,000,000
+
+Top 5 packages by monthly downloads
+  chalk  180,000,000/mo  ★ —  issues —
+  ora  20,000,000/mo  ★ —  issues —
+
+Generated 2026-05-07T12:00:00.000Z"
+`;
