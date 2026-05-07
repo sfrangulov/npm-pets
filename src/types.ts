@@ -44,6 +44,34 @@ export interface ProfileGitHub {
   skipReason?: string;
 }
 
+export type HealthStatus = "active" | "sleeping" | "dormant";
+
+export interface VelocityInsights {
+  last30d: number;
+  prev30d: number;
+  deltaPct: number; // (last30d - prev30d) / prev30d * 100; 0 if prev30d === 0
+  topGrowing: Array<{ name: string; deltaPct: number; last30d: number }>;
+}
+
+export interface HealthInsights {
+  active: number;
+  sleeping: number;
+  dormant: number;
+  perPackage: Record<string, HealthStatus>;
+}
+
+export interface StreakInsights {
+  longestMonths: number;
+  currentMonths: number;
+  longestPackage: string | null; // package name, null if no packages
+}
+
+export interface Insights {
+  velocity: VelocityInsights;
+  health: HealthInsights;
+  streak: StreakInsights;
+}
+
 export interface Profile {
   name: string;
   type: "user" | "org";
@@ -57,4 +85,5 @@ export interface Profile {
   };
   packages: Package[];
   github: ProfileGitHub;
+  insights: Insights;
 }
