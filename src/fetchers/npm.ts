@@ -11,6 +11,7 @@ export interface NpmPackageInfo {
   license: string | null;
   firstPublishedAt: string;
   lastPublishedAt: string;
+  publishTimestamps: string[]; // sorted ISO timestamps of every published version
   repository: RepoRef | null;
 }
 
@@ -73,6 +74,7 @@ export async function getPackage(name: string, cache?: FsCache): Promise<NpmPack
       license: null,
       firstPublishedAt: new Date(0).toISOString(),
       lastPublishedAt: new Date(0).toISOString(),
+      publishTimestamps: [],
       repository: null,
     };
   }
@@ -99,6 +101,7 @@ export async function getPackage(name: string, cache?: FsCache): Promise<NpmPack
     license,
     firstPublishedAt,
     lastPublishedAt,
+    publishTimestamps: publishTimes,
     repository: parseRepository(body.repository),
   };
 }

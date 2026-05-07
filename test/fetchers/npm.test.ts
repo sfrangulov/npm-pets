@@ -57,6 +57,26 @@ describe("getPackage", () => {
     expect(pkg.lastPublishedAt).toBe("2023-09-01T00:00:00.000Z");
     expect(pkg.repository).toEqual({ owner: "chalk", repo: "chalk" });
   });
+  it("getPackage returns sorted publishTimestamps from time map", async () => {
+    vi.stubGlobal("fetch", vi.fn(async () =>
+      new Response(JSON.stringify({
+        name: "x",
+        "dist-tags": { latest: "1.0.0" },
+        versions: { "1.0.0": {}, "0.1.0": {} },
+        time: {
+          created: "2020-01-01T00:00:00.000Z",
+          modified: "2024-06-01T00:00:00.000Z",
+          "0.1.0": "2020-01-15T00:00:00.000Z",
+          "1.0.0": "2024-05-01T00:00:00.000Z",
+        },
+      }), { status: 200 }),
+    ));
+    const info = await getPackage("x");
+    expect(info.publishTimestamps).toEqual([
+      "2020-01-15T00:00:00.000Z",
+      "2024-05-01T00:00:00.000Z",
+    ]);
+  });
 });
 
 describe("getDownloadsPoint", () => {
