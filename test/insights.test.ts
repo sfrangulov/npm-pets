@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { computeVelocity, computeHealth } from "../src/insights.js";
+// computeStreak will be imported once it's exported from insights.ts
 
 describe("computeVelocity", () => {
   it("computes deltaPct from per-package daily series", () => {
@@ -80,5 +81,83 @@ describe("computeHealth", () => {
   it("handles empty input", () => {
     const result = computeHealth([], now);
     expect(result).toEqual({ active: 0, sleeping: 0, dormant: 0, perPackage: {} });
+  });
+});
+
+describe("computeStreak", () => {
+  const now = new Date("2026-05-07T00:00:00.000Z");
+
+  it("counts the longest run of consecutive months across packages", async () => {
+    const { computeStreak } = await import("../src/insights.js");
+    const result = computeStreak(
+      [
+        {
+          name: "a",
+          publishTimestamps: [
+            "2024-01-15T00:00:00.000Z",
+            "2024-02-10T00:00:00.000Z",
+            "2024-03-20T00:00:00.000Z",
+            "2024-09-01T00:00:00.000Z",
+          ],
+        },
+      ],
+      now,
+    );
+    expect(result.longestMonths).toBe(3);
+    expect(result.longestPackage).toBe("a");
+  });
+
+  it("computes currentMonths as ongoing streak ending in the current calendar month", async () => {
+    const { computeStreak } = await import("../src/insights.js");
+    const result = computeStreak(
+      [
+        {
+          name: "live",
+          publishTimestamps: [
+            "2026-03-10T00:00:00.000Z",
+            "2026-04-10T00:00:00.000Z",
+            "2026-05-01T00:00:00.000Z",
+          ],
+        },
+      ],
+      now,
+    );
+    expect(result.currentMonths).toBe(3);
+  });
+
+  it("currentMonths is 0 when last release is older than 1 month from now", async () => {
+    const { computeStreak } = await import("../src/insights.js");
+    const result = computeStreak(
+      [{ name: "stale", publishTimestamps: ["2025-01-01T00:00:00.000Z"] }],
+      now,
+    );
+    expect(result.currentMonths).toBe(0);
+  });
+
+  it("picks the package with longest streak when multiple compete", async () => {
+    const { computeStreak } = await import("../src/insights.js");
+    const result = computeStreak(
+      [
+        { name: "short", publishTimestamps: ["2024-01-01T00:00:00.000Z", "2024-02-01T00:00:00.000Z"] },
+        {
+          name: "long",
+          publishTimestamps: [
+            "2024-01-01T00:00:00.000Z",
+            "2024-02-01T00:00:00.000Z",
+            "2024-03-01T00:00:00.000Z",
+            "2024-04-01T00:00:00.000Z",
+          ],
+        },
+      ],
+      now,
+    );
+    expect(result.longestMonths).toBe(4);
+    expect(result.longestPackage).toBe("long");
+  });
+
+  it("handles empty input", async () => {
+    const { computeStreak } = await import("../src/insights.js");
+    const result = computeStreak([], now);
+    expect(result).toEqual({ longestMonths: 0, currentMonths: 0, longestPackage: null });
   });
 });

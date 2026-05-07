@@ -1,4 +1,4 @@
-import type { VelocityInsights, HealthInsights, HealthStatus } from "./types.js";
+import type { VelocityInsights, HealthInsights, HealthStatus, StreakInsights } from "./types.js";
 
 export interface PackageDaily {
   name: string;
@@ -49,4 +49,67 @@ export function computeHealth(input: PackageActivity[], now: Date = new Date()):
     out.perPackage[pkg.name] = status;
   }
   return out;
+}
+
+export interface PackagePublishes {
+  name: string;
+  publishTimestamps: string[];
+}
+
+const monthKey = (d: Date) => `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, "0")}`;
+
+const monthsBetween = (a: string, b: string): number => {
+  const [ay, am] = a.split("-").map(Number);
+  const [by, bm] = b.split("-").map(Number);
+  return (by! - ay!) * 12 + (bm! - am!);
+};
+
+function longestConsecutiveStreak(months: string[]): number {
+  if (months.length === 0) return 0;
+  const uniq = Array.from(new Set(months)).sort();
+  let best = 1;
+  let run = 1;
+  for (let i = 1; i < uniq.length; i++) {
+    if (monthsBetween(uniq[i - 1]!, uniq[i]!) === 1) {
+      run++;
+      if (run > best) best = run;
+    } else {
+      run = 1;
+    }
+  }
+  return best;
+}
+
+function currentStreak(months: string[], now: Date): number {
+  if (months.length === 0) return 0;
+  const uniq = Array.from(new Set(months)).sort();
+  const nowKey = monthKey(now);
+  const last = uniq[uniq.length - 1]!;
+  if (monthsBetween(last, nowKey) > 1) return 0;
+  let run = 1;
+  for (let i = uniq.length - 1; i > 0; i--) {
+    if (monthsBetween(uniq[i - 1]!, uniq[i]!) === 1) run++;
+    else break;
+  }
+  return run;
+}
+
+export function computeStreak(input: PackagePublishes[], now: Date = new Date()): StreakInsights {
+  if (input.length === 0) {
+    return { longestMonths: 0, currentMonths: 0, longestPackage: null };
+  }
+  let longestMonths = 0;
+  let longestPackage: string | null = null;
+  let currentMonths = 0;
+  for (const pkg of input) {
+    const months = pkg.publishTimestamps.map((t) => monthKey(new Date(t)));
+    const longest = longestConsecutiveStreak(months);
+    if (longest > longestMonths) {
+      longestMonths = longest;
+      longestPackage = pkg.name;
+    }
+    const cur = currentStreak(months, now);
+    if (cur > currentMonths) currentMonths = cur;
+  }
+  return { longestMonths, currentMonths, longestPackage };
 }
