@@ -73,6 +73,22 @@ export interface Insights {
   streak: StreakInsights;
 }
 
+export type PersonaType =
+  | "rocket"
+  | "streaker"
+  | "one-hit-wonder"
+  | "polyglot"
+  | "veteran"
+  | "active-maintainer"
+  | "builder";
+
+export interface PersonaInfo {
+  type: PersonaType;
+  label: string;
+  emoji: string;
+  description: string;
+}
+
 export interface Profile {
   name: string;
   type: "user" | "org";
@@ -87,4 +103,5 @@ export interface Profile {
   packages: Package[];
   github: ProfileGitHub;
   insights: Insights;
+  persona: PersonaInfo;
 }
