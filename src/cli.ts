@@ -51,7 +51,7 @@ export async function runCli(
 
   const target = String(parsed.target).replace(/^@/, "");
   const fmtRaw = String(parsed.format);
-  if (!["pretty", "text", "json", "markdown"].includes(fmtRaw)) {
+  if (!["pretty", "text", "json", "markdown", "card"].includes(fmtRaw)) {
     stderr(`invalid --format "${fmtRaw}"\n`);
     return 2;
   }
@@ -78,7 +78,7 @@ export async function runCli(
       onProgress: (s) => spinner.update(s),
     });
     spinner.stop();
-    stdout(format(profile, fmt, top, font) + "\n");
+    stdout((await format(profile, fmt, top, font)) + "\n");
     return 0;
   } catch (err) {
     spinner.stop();

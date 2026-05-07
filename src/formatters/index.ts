@@ -4,13 +4,17 @@ import { formatMarkdown } from "./markdown.js";
 import { formatPretty } from "./pretty.js";
 import { formatText } from "./text.js";
 
-export type Format = "pretty" | "text" | "json" | "markdown";
+export type Format = "pretty" | "text" | "json" | "markdown" | "card";
 
-export function format(profile: Profile, fmt: Format, top: number, font: string): string {
+export async function format(profile: Profile, fmt: Format, top: number, font: string): Promise<string> {
   switch (fmt) {
     case "json": return formatJson(profile);
     case "text": return formatText(profile, top);
     case "markdown": return formatMarkdown(profile, top);
     case "pretty": return formatPretty(profile, top, font);
+    case "card": {
+      const { formatCard } = await import("./card.js" as string);
+      return formatCard(profile, top);
+    }
   }
 }
