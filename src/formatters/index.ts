@@ -13,7 +13,7 @@ export async function format(profile: Profile, fmt: Format, top: number, font: s
     case "markdown": return formatMarkdown(profile, top);
     case "pretty": return formatPretty(profile, top, font);
     case "card": {
-      const { formatCard } = await import("./card.js" as string);
+      const { formatCard } = await import("./card.js");
       return formatCard(profile, top);
     }
   }
