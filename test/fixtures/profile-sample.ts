@@ -52,6 +52,28 @@ export const sampleProfile: Profile = {
     },
   ],
   github: { followers: 60_000, available: true },
+  insights: {
+    velocity: {
+      last30d: 200_000_000,
+      prev30d: 180_000_000,
+      deltaPct: 11.11,
+      topGrowing: [
+        { name: "ora", deltaPct: 25, last30d: 20_000_000 },
+        { name: "chalk", deltaPct: 8, last30d: 180_000_000 },
+      ],
+    },
+    health: {
+      active: 0,
+      sleeping: 0,
+      dormant: 2,
+      perPackage: { chalk: "dormant", ora: "dormant" },
+    },
+    streak: {
+      longestMonths: 6,
+      currentMonths: 0,
+      longestPackage: "chalk",
+    },
+  },
 };
 
 export const rateLimitedProfile: Profile = {

@@ -17,12 +17,14 @@ describe("buildProfile", () => {
       license: "MIT",
       firstPublishedAt: "2013-01-01T00:00:00Z",
       lastPublishedAt: "2024-01-01T00:00:00Z",
+      publishTimestamps: [],
       repository: { owner: "chalk", repo: "chalk" },
     });
     vi.spyOn(npm, "getDownloadsPoint").mockImplementation(async (_p, period) =>
       period === "last-week" ? 10_000_000 : 42_000_000,
     );
     vi.spyOn(npm, "getDownloadsRange").mockResolvedValue(900_000_000);
+    vi.spyOn(npm, "getDownloadsDaily").mockResolvedValue(new Array(60).fill(0));
     vi.spyOn(github, "getRepo").mockResolvedValue({
       owner: "chalk",
       repo: "chalk",
@@ -65,10 +67,12 @@ describe("buildProfile", () => {
       license: "MIT",
       firstPublishedAt: "2024-01-01T00:00:00Z",
       lastPublishedAt: "2024-01-01T00:00:00Z",
+      publishTimestamps: [],
       repository: { owner: "chalk", repo: "chalk" },
     });
     vi.spyOn(npm, "getDownloadsPoint").mockResolvedValue(1);
     vi.spyOn(npm, "getDownloadsRange").mockResolvedValue(1);
+    vi.spyOn(npm, "getDownloadsDaily").mockResolvedValue(new Array(60).fill(0));
     vi.spyOn(github, "getRepo").mockRejectedValue(new github.RateLimitError());
     vi.spyOn(github, "getUser").mockRejectedValue(new github.RateLimitError());
 

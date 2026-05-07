@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { computeVelocity, computeHealth } from "../src/insights.js";
+import { computeVelocity, computeHealth, buildInsights } from "../src/insights.js";
 // computeStreak will be imported once it's exported from insights.ts
 
 describe("computeVelocity", () => {
@@ -159,5 +159,25 @@ describe("computeStreak", () => {
     const { computeStreak } = await import("../src/insights.js");
     const result = computeStreak([], now);
     expect(result).toEqual({ longestMonths: 0, currentMonths: 0, longestPackage: null });
+  });
+});
+
+describe("buildInsights", () => {
+  it("composes velocity, health, streak from one input shape", () => {
+    const now = new Date("2026-05-07T00:00:00.000Z");
+    const result = buildInsights(
+      [
+        {
+          name: "a",
+          daily: [...new Array(30).fill(5), ...new Array(30).fill(10)],
+          lastActivity: "2026-05-01T00:00:00.000Z",
+          publishTimestamps: ["2026-04-01T00:00:00.000Z", "2026-05-01T00:00:00.000Z"],
+        },
+      ],
+      now,
+    );
+    expect(result.velocity.last30d).toBe(300);
+    expect(result.health.active).toBe(1);
+    expect(result.streak.currentMonths).toBe(2);
   });
 });

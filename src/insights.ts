@@ -1,4 +1,4 @@
-import type { VelocityInsights, HealthInsights, HealthStatus, StreakInsights } from "./types.js";
+import type { VelocityInsights, HealthInsights, HealthStatus, StreakInsights, Insights } from "./types.js";
 
 export interface PackageDaily {
   name: string;
@@ -92,6 +92,16 @@ function currentStreak(months: string[], now: Date): number {
     else break;
   }
   return run;
+}
+
+export interface PackageInsightInput extends PackageDaily, PackageActivity, PackagePublishes {}
+
+export function buildInsights(input: PackageInsightInput[], now: Date = new Date()): Insights {
+  return {
+    velocity: computeVelocity(input.map(({ name, daily }) => ({ name, daily }))),
+    health: computeHealth(input.map(({ name, lastActivity }) => ({ name, lastActivity })), now),
+    streak: computeStreak(input.map(({ name, publishTimestamps }) => ({ name, publishTimestamps })), now),
+  };
 }
 
 export function computeStreak(input: PackagePublishes[], now: Date = new Date()): StreakInsights {

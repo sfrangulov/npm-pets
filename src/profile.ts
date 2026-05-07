@@ -4,6 +4,7 @@ import * as npm from "./fetchers/npm.js";
 import * as github from "./fetchers/github.js";
 import { RateLimitError } from "./fetchers/github.js";
 import type { Package, Profile, GitHubRepo } from "./types.js";
+import { buildInsights } from "./insights.js";
 
 export interface BuildProfileOptions {
   target: string;
@@ -34,7 +35,11 @@ export async function buildProfile(opts: BuildProfileOptions): Promise<Profile> 
   };
 
   const limit = pLimit(opts.concurrency);
-  type IntermediatePackage = Omit<Package, "repository"> & { _ref: npm.RepoRef | null };
+  type IntermediatePackage = Omit<Package, "repository"> & {
+    _ref: npm.RepoRef | null;
+    publishTimestamps: string[];
+    daily: number[];
+  };
 
   let pkgDone = 0;
   const total = packageNames.length;
@@ -44,10 +49,11 @@ export async function buildProfile(opts: BuildProfileOptions): Promise<Profile> 
     packageNames.map((name) =>
       limit(async () => {
         const info = await npm.getPackage(name, opts.cache);
-        const [lastWeek, lastMonth, allTime] = await Promise.all([
+        const [lastWeek, lastMonth, allTime, daily] = await Promise.all([
           npm.getDownloadsPoint(name, "last-week", opts.cache),
           npm.getDownloadsPoint(name, "last-month", opts.cache),
           npm.getDownloadsRange(name, info.firstPublishedAt, opts.cache).catch(() => 0),
+          npm.getDownloadsDaily(name, 60, opts.cache).catch(() => new Array(60).fill(0) as number[]),
         ]);
         pkgDone++;
         report(`fetching package data (${pkgDone}/${total})`);
@@ -59,6 +65,8 @@ export async function buildProfile(opts: BuildProfileOptions): Promise<Profile> 
           license: info.license,
           firstPublishedAt: info.firstPublishedAt,
           lastPublishedAt: info.lastPublishedAt,
+          publishTimestamps: info.publishTimestamps,
+          daily,
           downloads: { lastWeek, lastMonth, allTime, allTimePartial: allTime === 0 && lastMonth > 0 },
           _ref: info.repository,
         };
@@ -112,7 +120,7 @@ export async function buildProfile(opts: BuildProfileOptions): Promise<Profile> 
   }
 
   const finalPackages: Package[] = packages
-    .map(({ _ref, ...rest }) => ({
+    .map(({ _ref, publishTimestamps: _pt, daily: _d, ...rest }) => ({
       ...rest,
       repository: _ref ? repoData.get(`${_ref.owner}/${_ref.repo}`) ?? null : null,
     }))
@@ -129,6 +137,20 @@ export async function buildProfile(opts: BuildProfileOptions): Promise<Profile> 
     { downloadsLastWeek: 0, downloadsLastMonth: 0, downloadsAllTime: 0, githubStars: 0 },
   );
 
+  const insights = buildInsights(
+    packages.map((p) => {
+      const lastActivity =
+        (p._ref ? repoData.get(`${p._ref.owner}/${p._ref.repo}`)?.pushedAt : undefined) ??
+        p.lastPublishedAt;
+      return {
+        name: p.name,
+        daily: p.daily,
+        lastActivity,
+        publishTimestamps: p.publishTimestamps,
+      };
+    }),
+  );
+
   return {
     name: opts.target,
     type: targetType,
@@ -137,6 +159,7 @@ export async function buildProfile(opts: BuildProfileOptions): Promise<Profile> 
     totals,
     packages: finalPackages,
     github: { followers, available: githubAvailable, skipReason: githubSkipReason },
+    insights,
   };
 }
 
