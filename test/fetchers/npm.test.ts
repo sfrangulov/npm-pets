@@ -58,7 +58,7 @@ describe("getPackage", () => {
     expect(pkg.repository).toEqual({ owner: "chalk", repo: "chalk" });
   });
   it("getPackage returns sorted publishTimestamps from time map", async () => {
-    vi.stubGlobal("fetch", vi.fn(async () =>
+    vi.spyOn(globalThis, "fetch").mockImplementation(async () =>
       new Response(JSON.stringify({
         name: "x",
         "dist-tags": { latest: "1.0.0" },
@@ -70,7 +70,7 @@ describe("getPackage", () => {
           "1.0.0": "2024-05-01T00:00:00.000Z",
         },
       }), { status: 200 }),
-    ));
+    );
     const info = await getPackage("x");
     expect(info.publishTimestamps).toEqual([
       "2020-01-15T00:00:00.000Z",
