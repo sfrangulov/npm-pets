@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { computeVelocity } from "../src/insights.js";
+import { computeVelocity, computeHealth } from "../src/insights.js";
 
 describe("computeVelocity", () => {
   it("computes deltaPct from per-package daily series", () => {
@@ -35,5 +35,50 @@ describe("computeVelocity", () => {
   it("handles empty input", () => {
     const result = computeVelocity([]);
     expect(result).toEqual({ last30d: 0, prev30d: 0, deltaPct: 0, topGrowing: [] });
+  });
+});
+
+describe("computeHealth", () => {
+  const now = new Date("2026-05-07T00:00:00.000Z");
+  const daysAgo = (n: number) => {
+    const d = new Date(now);
+    d.setDate(d.getDate() - n);
+    return d.toISOString();
+  };
+
+  it("classifies packages by recency: <30d active, 30-180d sleeping, >180d dormant", () => {
+    const result = computeHealth(
+      [
+        { name: "fresh", lastActivity: daysAgo(5) },
+        { name: "okay", lastActivity: daysAgo(60) },
+        { name: "old", lastActivity: daysAgo(365) },
+      ],
+      now,
+    );
+    expect(result.active).toBe(1);
+    expect(result.sleeping).toBe(1);
+    expect(result.dormant).toBe(1);
+    expect(result.perPackage).toEqual({
+      fresh: "active",
+      okay: "sleeping",
+      old: "dormant",
+    });
+  });
+
+  it("treats edge cases at exactly 30 and 180 days", () => {
+    const result = computeHealth(
+      [
+        { name: "boundary30", lastActivity: daysAgo(30) },
+        { name: "boundary180", lastActivity: daysAgo(180) },
+      ],
+      now,
+    );
+    expect(result.perPackage.boundary30).toBe("sleeping");
+    expect(result.perPackage.boundary180).toBe("dormant");
+  });
+
+  it("handles empty input", () => {
+    const result = computeHealth([], now);
+    expect(result).toEqual({ active: 0, sleeping: 0, dormant: 0, perPackage: {} });
   });
 });

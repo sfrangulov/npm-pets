@@ -1,4 +1,4 @@
-import type { VelocityInsights } from "./types.js";
+import type { VelocityInsights, HealthInsights, HealthStatus } from "./types.js";
 
 export interface PackageDaily {
   name: string;
@@ -29,4 +29,24 @@ export function computeVelocity(input: PackageDaily[]): VelocityInsights {
     .slice(0, 3)
     .map(({ name, deltaPct, last30d }) => ({ name, deltaPct, last30d }));
   return { last30d, prev30d, deltaPct, topGrowing };
+}
+
+export interface PackageActivity {
+  name: string;
+  lastActivity: string; // ISO date — pushedAt from GH or lastPublishedAt fallback
+}
+
+export function computeHealth(input: PackageActivity[], now: Date = new Date()): HealthInsights {
+  const out: HealthInsights = { active: 0, sleeping: 0, dormant: 0, perPackage: {} };
+  for (const pkg of input) {
+    const ts = new Date(pkg.lastActivity).getTime();
+    const ageDays = (now.getTime() - ts) / (1000 * 60 * 60 * 24);
+    let status: HealthStatus;
+    if (ageDays < 30) status = "active";
+    else if (ageDays < 180) status = "sleeping";
+    else status = "dormant";
+    out[status]++;
+    out.perPackage[pkg.name] = status;
+  }
+  return out;
 }
