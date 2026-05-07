@@ -37,4 +37,12 @@ describe("formatPretty", () => {
     expect(out).toContain("chalk");
     expect(out).not.toContain("ora");
   });
+
+  it("matches snapshot for full profile", () => {
+    expect(formatPretty(sampleProfile, 5, "Standard")).toMatchSnapshot();
+  });
+
+  it("matches snapshot when GitHub data is unavailable", () => {
+    expect(formatPretty(rateLimitedProfile, 5, "Standard")).toMatchSnapshot();
+  });
 });

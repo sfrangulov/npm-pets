@@ -47,12 +47,30 @@ export function formatPretty(profile: Profile, top: number, font: string): strin
     ]);
   }
 
+  const v = profile.insights.velocity;
+  const trendSign = v.deltaPct >= 0 ? "↑" : "↓";
+  const trendColor = v.deltaPct >= 0 ? chalk.green : chalk.red;
+  const trendLine = `${trendColor(`${trendSign} ${Math.abs(v.deltaPct).toFixed(1)}%`)} MoM (${fmt.format(v.last30d)} vs ${fmt.format(v.prev30d)})`;
+  const h = profile.insights.health;
+  const healthLine = `${chalk.green(`● ${h.active}`)} active · ${chalk.yellow(`● ${h.sleeping}`)} sleeping · ${chalk.dim(`● ${h.dormant}`)} dormant`;
+  const s = profile.insights.streak;
+  const streakLine = s.longestMonths > 0
+    ? `🔥 longest ${chalk.bold(`${s.longestMonths} mo`)} in ${chalk.cyan(s.longestPackage)}` +
+        (s.currentMonths > 0 ? `, current ${chalk.bold(`${s.currentMonths}`)}` : "")
+    : chalk.dim("🔥 no streak yet");
+
   const body =
     summaryLines.join("\n") +
     "\n\n" +
     chalk.bold("Downloads") +
     "\n" +
     dlTable.toString() +
+    "\n\n" +
+    chalk.bold("Insights") +
+    "\n" +
+    `  trend:   ${trendLine}\n` +
+    `  health:  ${healthLine}\n` +
+    `  streak:  ${streakLine}` +
     "\n\n" +
     chalk.bold(`Top ${top} by monthly downloads`) +
     "\n" +
