@@ -104,6 +104,30 @@ describe("getDownloadsRange (all-time)", () => {
   });
 });
 
+describe("getDownloadsDaily", () => {
+  it("getDownloadsDaily returns last N daily counts oldest-first", async () => {
+    const today = new Date();
+    const days = Array.from({ length: 5 }, (_, i) => {
+      const d = new Date(today);
+      d.setDate(d.getDate() - (4 - i));
+      return { day: d.toISOString().slice(0, 10), downloads: (i + 1) * 10 };
+    });
+    vi.spyOn(globalThis, "fetch").mockImplementation(async () =>
+      new Response(JSON.stringify({ downloads: days }), { status: 200 }) as unknown as Response,
+    );
+    const out = await (await import("../../src/fetchers/npm.js")).getDownloadsDaily("x", 5);
+    expect(out).toEqual([10, 20, 30, 40, 50]);
+  });
+
+  it("getDownloadsDaily returns array of zeros on 404", async () => {
+    vi.spyOn(globalThis, "fetch").mockImplementation(async () =>
+      new Response("not found", { status: 404 }) as unknown as Response,
+    );
+    const out = await (await import("../../src/fetchers/npm.js")).getDownloadsDaily("nope", 3);
+    expect(out).toEqual([0, 0, 0]);
+  });
+});
+
 describe("parseRepository", () => {
   it("parses git+https", () => {
     expect(parseRepository("git+https://github.com/chalk/chalk.git")).toEqual({ owner: "chalk", repo: "chalk" });

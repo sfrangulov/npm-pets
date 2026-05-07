@@ -136,3 +136,24 @@ export async function getDownloadsRange(pkg: string, sinceISO: string, cache?: F
   }
   return total;
 }
+
+export async function getDownloadsDaily(pkg: string, days: number, cache?: FsCache): Promise<number[]> {
+  if (days <= 0) return [];
+  const today = new Date();
+  const start = new Date(today);
+  start.setDate(start.getDate() - (days - 1));
+  const startStr = start.toISOString().slice(0, 10);
+  const endStr = today.toISOString().slice(0, 10);
+  const url = `${DOWNLOADS}/downloads/range/${startStr}:${endStr}/${encodeURIComponent(pkg)}`;
+  const { status, body } = await httpJson<{ downloads?: Array<{ day: string; downloads: number }> } | null>(url, { cache });
+  if (status < 200 || status >= 300 || !body) return new Array(days).fill(0);
+  const map = new Map<string, number>();
+  for (const d of body.downloads ?? []) map.set(d.day, d.downloads);
+  const out: number[] = [];
+  for (let i = days - 1; i >= 0; i--) {
+    const d = new Date(today);
+    d.setDate(d.getDate() - i);
+    out.push(map.get(d.toISOString().slice(0, 10)) ?? 0);
+  }
+  return out;
+}
