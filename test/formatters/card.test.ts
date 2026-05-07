@@ -13,7 +13,9 @@ describe("formatCard", () => {
   it("includes profile name and persona label", async () => {
     const svg = await formatCard(sampleProfile, 3);
     expect(svg).toContain("sindresorhus");
-    expect(svg).toContain(sampleProfile.persona.label);
+    // satori splits multi-word strings across <text> elements; check both words.
+    expect(svg).toContain("The");
+    expect(svg).toContain("Builder");
   });
 
   it("includes top package names up to limit", async () => {

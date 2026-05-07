@@ -131,9 +131,5 @@ export async function formatCard(profile: Profile, top: number): Promise<string>
     ],
   });
 
-  // Append a metadata comment so downstream consumers (and tests) can
-  // find the plain-text values even though satori splits rendered text.
-  const topPkgNames = profile.packages.slice(0, top).map((p) => p.name).join(", ");
-  const meta = `<!-- npm-pets: name="${profile.name}" persona="${profile.persona.label}" packages="${topPkgNames}" -->`;
-  return svg + "\n" + meta;
+  return svg;
 }
