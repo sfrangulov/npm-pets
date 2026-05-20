@@ -47,5 +47,11 @@ export function formatMarkdown(profile: Profile, top: number): string {
   }
   lines.push("");
   lines.push(`*Generated ${profile.generatedAt} by [npm-pets](https://www.npmjs.com/package/npm-pets).*`);
+  lines.push("");
+  lines.push("### 🐾 Add this card to your README");
+  lines.push("");
+  lines.push("```markdown");
+  lines.push(`![${profile.name} on npm](./card.png)`);
+  lines.push("```");
   return lines.join("\n");
 }

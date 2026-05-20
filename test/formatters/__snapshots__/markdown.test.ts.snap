@@ -27,7 +27,13 @@ exports[`formatMarkdown > matches snapshot for full profile 1`] = `
 | [chalk](https://www.npmjs.com/package/chalk) | 180,000,000 | 22,000 | 4 |
 | [ora](https://www.npmjs.com/package/ora) | 20,000,000 | 5,000 | 12 |
 
-*Generated 2026-05-07T12:00:00.000Z by [npm-pets](https://www.npmjs.com/package/npm-pets).*"
+*Generated 2026-05-07T12:00:00.000Z by [npm-pets](https://www.npmjs.com/package/npm-pets).*
+
+### 🐾 Add this card to your README
+
+\`\`\`markdown
+![sindresorhus on npm](./card.png)
+\`\`\`"
 `;
 
 exports[`formatMarkdown > matches snapshot when GitHub data is unavailable 1`] = `
@@ -57,5 +63,11 @@ exports[`formatMarkdown > matches snapshot when GitHub data is unavailable 1`] =
 | [chalk](https://www.npmjs.com/package/chalk) | 180,000,000 | — | — |
 | [ora](https://www.npmjs.com/package/ora) | 20,000,000 | — | — |
 
-*Generated 2026-05-07T12:00:00.000Z by [npm-pets](https://www.npmjs.com/package/npm-pets).*"
+*Generated 2026-05-07T12:00:00.000Z by [npm-pets](https://www.npmjs.com/package/npm-pets).*
+
+### 🐾 Add this card to your README
+
+\`\`\`markdown
+![sindresorhus on npm](./card.png)
+\`\`\`"
 `;
