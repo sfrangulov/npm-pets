@@ -1,7 +1,12 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`formatPretty > matches snapshot for full profile 1`] = `
-"                                         _       
+"   _____
+  |[][]_|
+  |[][]_|
+  |[][]_|
+  '-----'
+                                         _       
   _ __  _ __  _ __ ___        _ __   ___| |_ ___ 
  | '_ \\| '_ \\| '_ \` _ \\ _____| '_ \\ / _ \\ __/ __|
  | | | | |_) | | | | | |_____| |_) |  __/ |_\\__ \\
@@ -41,7 +46,12 @@ exports[`formatPretty > matches snapshot for full profile 1`] = `
 `;
 
 exports[`formatPretty > matches snapshot when GitHub data is unavailable 1`] = `
-"                                         _       
+"   _____
+  |[][]_|
+  |[][]_|
+  |[][]_|
+  '-----'
+                                         _       
   _ __  _ __  _ __ ___        _ __   ___| |_ ___ 
  | '_ \\| '_ \\| '_ \` _ \\ _____| '_ \\ / _ \\ __/ __|
  | | | | |_) | | | | | |_____| |_) |  __/ |_\\__ \\

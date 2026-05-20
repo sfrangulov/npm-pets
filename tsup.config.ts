@@ -1,5 +1,5 @@
 import { defineConfig } from "tsup";
-import { copyFileSync, mkdirSync } from "node:fs";
+import { copyFileSync, mkdirSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 
 export default defineConfig({
@@ -12,10 +12,19 @@ export default defineConfig({
   banner: { js: "#!/usr/bin/env node" },
   shims: false,
   onSuccess: async () => {
-    const dest = join("dist", "assets", "fonts");
-    mkdirSync(dest, { recursive: true });
-    copyFileSync(join("assets", "fonts", "Inter-Regular.ttf"), join(dest, "Inter-Regular.ttf"));
-    copyFileSync(join("assets", "fonts", "Inter-Bold.ttf"), join(dest, "Inter-Bold.ttf"));
-    copyFileSync(join("assets", "fonts", "LICENSE.txt"), join(dest, "LICENSE.txt"));
+    const fontsDest = join("dist", "assets", "fonts");
+    mkdirSync(fontsDest, { recursive: true });
+    copyFileSync(join("assets", "fonts", "Inter-Regular.ttf"), join(fontsDest, "Inter-Regular.ttf"));
+    copyFileSync(join("assets", "fonts", "Inter-Bold.ttf"), join(fontsDest, "Inter-Bold.ttf"));
+    copyFileSync(join("assets", "fonts", "LICENSE.txt"), join(fontsDest, "LICENSE.txt"));
+
+    const personasSrc = join("src", "assets", "personas");
+    const personasDest = join("dist", "assets", "personas");
+    mkdirSync(personasDest, { recursive: true });
+    for (const file of readdirSync(personasSrc)) {
+      if (file.endsWith(".txt")) {
+        copyFileSync(join(personasSrc, file), join(personasDest, file));
+      }
+    }
   },
 });

@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 import type { Profile } from "../types.js";
+import { getPersonaAscii } from "../assets/personas/index.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -105,13 +106,33 @@ export async function formatCard(profile: Profile, top: number): Promise<string>
       el("div", { style: { fontSize: 28, color: palette.accent, fontWeight: 700 } }, "npm-pets"),
       el("div", { style: { fontSize: 22, color: palette.dim } }, profile.type === "org" ? "organization" : "user"),
     ),
-    el("div", { style: { marginTop: 32, display: "flex", flexDirection: "column" } },
-      el("div", { style: { fontSize: 64, fontWeight: 700, color: palette.text } }, profile.name),
-      el("div", { style: { fontSize: 28, color: palette.persona, marginTop: 8, display: "flex" } },
-        `${profile.persona.emoji}  ${profile.persona.label}`,
-      ),
-      el("div", { style: { fontSize: 22, color: palette.dim, marginTop: 4 } },
-        profile.persona.description,
+    el("div", { style: { marginTop: 32, display: "flex", alignItems: "center" } },
+      ...(getPersonaAscii(profile.persona.type)
+        ? [
+            el(
+              "div",
+              {
+                style: {
+                  whiteSpace: "pre",
+                  fontFamily: "monospace",
+                  fontSize: 18,
+                  lineHeight: 1.1,
+                  color: palette.persona,
+                  marginRight: 28,
+                },
+              },
+              getPersonaAscii(profile.persona.type) as string,
+            ),
+          ]
+        : []),
+      el("div", { style: { display: "flex", flexDirection: "column" } },
+        el("div", { style: { fontSize: 64, fontWeight: 700, color: palette.text } }, profile.name),
+        el("div", { style: { fontSize: 28, color: palette.persona, marginTop: 8, display: "flex" } },
+          `${profile.persona.emoji}  ${profile.persona.label}`,
+        ),
+        el("div", { style: { fontSize: 22, color: palette.dim, marginTop: 4 } },
+          profile.persona.description,
+        ),
       ),
     ),
     el("div", { style: { display: "flex", marginTop: 36, padding: 28, backgroundColor: palette.panel, borderRadius: 16 } },

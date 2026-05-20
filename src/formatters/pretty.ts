@@ -3,12 +3,17 @@ import chalk from "chalk";
 import figlet from "figlet";
 import Table from "cli-table3";
 import type { Profile } from "../types.js";
+import { getPersonaAscii } from "../assets/personas/index.js";
 
 const fmt = new Intl.NumberFormat("en-US");
 
 export function formatPretty(profile: Profile, top: number, font: string): string {
   const sections: string[] = [];
 
+  const pet = getPersonaAscii(profile.persona.type);
+  if (pet) {
+    sections.push(chalk.cyan(pet));
+  }
   const header = figlet.textSync("npm-pets", { font: font as figlet.Fonts });
   sections.push(chalk.cyan(header));
   sections.push(chalk.dim(`              ~ ${profile.name} ~\n`));
