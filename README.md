@@ -4,7 +4,6 @@
 [![npm downloads](https://img.shields.io/npm/dm/npm-pets.svg)](https://www.npmjs.com/package/npm-pets)
 [![node](https://img.shields.io/node/v/npm-pets.svg)](https://www.npmjs.com/package/npm-pets)
 [![license](https://img.shields.io/npm/l/npm-pets.svg)](./LICENSE)
-[![GitHub stars](https://img.shields.io/github/stars/sfrangulov/npm-pets.svg?style=social)](https://github.com/sfrangulov/npm-pets)
 
 CLI for npm user and organization stats. Generates a shareable profile with downloads, top packages, and GitHub stars — no AI, no setup.
 
