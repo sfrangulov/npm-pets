@@ -19,12 +19,12 @@ export interface BuildProfileOptions {
 export async function buildProfile(opts: BuildProfileOptions): Promise<Profile> {
   const report = (s: string) => opts.onProgress?.(s);
 
-  report(`resolving "${opts.target}"`);
+  report(`🐾 sniffing npm registry for "${opts.target}"...`);
   const { type: targetType, packageNames } = await listAndDetect(opts);
   if (packageNames.length === 0) {
     throw new Error(`no npm packages found for "${opts.target}"`);
   }
-  report(`found ${packageNames.length} ${targetType} packages`);
+  report(`🦴 dug up ${packageNames.length} ${targetType} packages`);
 
   let githubAvailable = true;
   let githubSkipReason: string | undefined;
@@ -44,7 +44,7 @@ export async function buildProfile(opts: BuildProfileOptions): Promise<Profile> 
 
   let pkgDone = 0;
   const total = packageNames.length;
-  report(`fetching package data (0/${total})`);
+  report(`📦 unboxing pkg 0 of ${total}...`);
 
   const packages: IntermediatePackage[] = await Promise.all(
     packageNames.map((name) =>
@@ -57,7 +57,7 @@ export async function buildProfile(opts: BuildProfileOptions): Promise<Profile> 
           npm.getDownloadsDaily(name, 60, opts.cache).catch(() => new Array(60).fill(0) as number[]),
         ]);
         pkgDone++;
-        report(`fetching package data (${pkgDone}/${total})`);
+        report(`📦 unboxing pkg ${pkgDone} of ${total}...`);
         return {
           name: info.name,
           version: info.version,
@@ -85,7 +85,7 @@ export async function buildProfile(opts: BuildProfileOptions): Promise<Profile> 
   if (githubAvailable) {
     let ghDone = 0;
     const ghTotal = refMap.size;
-    report(`fetching GitHub data (0/${ghTotal})`);
+    report(`⭐ counting stars (0/${ghTotal})...`);
     await Promise.all(
       Array.from(refMap.values()).map((ref) =>
         limit(async () => {
@@ -105,7 +105,7 @@ export async function buildProfile(opts: BuildProfileOptions): Promise<Profile> 
             if (e instanceof RateLimitError) onRateLimit("repo info");
           }
           ghDone++;
-          report(`fetching GitHub data (${ghDone}/${ghTotal})`);
+          report(`⭐ counting stars (${ghDone}/${ghTotal})...`);
         }),
       ),
     );
