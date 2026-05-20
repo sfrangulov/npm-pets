@@ -2,6 +2,28 @@
   "name": "npm-pets",
   "version": "0.3.1",
   "description": "CLI for npm user and organization stats",
+  "author": {
+    "name": "Sergei Frangulov",
+    "email": "sfrangulov@gmail.com",
+    "url": "https://github.com/sfrangulov"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sfrangulov/npm-pets.git"
+  },
+  "homepage": "https://github.com/sfrangulov/npm-pets#readme",
+  "bugs": {
+    "url": "https://github.com/sfrangulov/npm-pets/issues"
+  },
+  "license": "MIT",
+  "keywords": [
+    "npm",
+    "cli",
+    "stats",
+    "profile",
+    "downloads",
+    "github-stats"
+  ],
   "type": "module",
   "main": "./dist/lib.js",
   "types": "./dist/lib.d.ts",
@@ -17,7 +39,8 @@
   "files": [
     "dist",
     "assets",
-    "README.md"
+    "README.md",
+    "LICENSE"
   ],
   "engines": {
     "node": ">=20"
