@@ -18,6 +18,12 @@ describe("formatCard", () => {
     expect(svg).toContain("Builder");
   });
 
+  it("includes persona description as subtitle", async () => {
+    const svg = await formatCard(sampleProfile, 3);
+    expect(svg).toContain("Quietly");
+    expect(svg).toContain("shipping");
+  });
+
   it("includes top package names up to limit", async () => {
     const svg = await formatCard(sampleProfile, 1);
     expect(svg).toContain("chalk");
