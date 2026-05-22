@@ -1,0 +1,38 @@
+# Publishes to npm with provenance when a version tag is pushed.
+#
+# Auth: npm OIDC Trusted Publishing (no NPM_TOKEN). One-time setup on npmjs.com:
+#   npm-pets settings -> Trusted Publishers -> Add publisher -> GitHub Actions
+#     Repository owner:  sfrangulov
+#     Repository name:   npm-pets
+#     Workflow filename: publish.yml
+#
+# Release flow:
+#   npm version <patch|minor|major>
+#   git push && git push --tags
+name: Publish
+
+on:
+  push:
+    tags:
+      - '*.*.*'
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  publish:
+    name: Publish to npm
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          registry-url: 'https://registry.npmjs.org'
+          cache: 'npm'
+      - run: npm ci
+      # OIDC Trusted Publishing requires npm >= 11.5; runners ship npm 10.
+      - run: npm install -g npm@latest
+      # prepublishOnly runs the tsup build; provenance is signed via OIDC.
+      - run: npm publish --provenance --access public
