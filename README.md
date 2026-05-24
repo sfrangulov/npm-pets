@@ -4,6 +4,9 @@
 [![npm downloads](https://img.shields.io/npm/dm/npm-pets.svg)](https://www.npmjs.com/package/npm-pets)
 [![node](https://img.shields.io/node/v/npm-pets.svg)](https://www.npmjs.com/package/npm-pets)
 [![license](https://img.shields.io/npm/l/npm-pets.svg)](./LICENSE)
+[![ephemeris momentum](https://ephemeris.tools/badge/sfrangulov/npm-pets/momentum.svg?theme=auto)](https://ephemeris.tools/u/sfrangulov)
+[![ephemeris sparkline](https://ephemeris.tools/badge/sfrangulov/npm-pets/sparkline.svg?theme=auto)](https://ephemeris.tools/u/sfrangulov)
+[![ephemeris stars](https://ephemeris.tools/badge/sfrangulov/npm-pets/stars.svg?theme=auto)](https://ephemeris.tools/u/sfrangulov)
 
 CLI for npm user and organization stats. Generates a shareable profile with downloads, top packages, and GitHub stars — no AI, no setup.
 
